@@ -1,5 +1,8 @@
 #! ./node_modules/.bin/ts-node-esm
 
+// NOTE: I had so much trouble getting this .ts file to run
+// ...
+
 import * as AdmZip from "adm-zip";
 import * as path from "path";
 import "zx/globals";

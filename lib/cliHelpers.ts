@@ -7,6 +7,7 @@ export interface IArgInput<T = any> {
 }
 
 class CLIHelpers {
+    // NOTE: I wish this could return inferred types but I dunno how
     getArgs<T extends IArgInput>(argOptions: { inputs: T[] }): {
         [K in T["name"]]: T["default"]
     } {

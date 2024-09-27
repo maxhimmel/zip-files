@@ -11,7 +11,8 @@ import { cliHelpers, IArgInput, invokeAtDirectory } from "./lib/cliHelpers";
 import { fileHelpers } from "./lib/fileHelpers";
 import { Readable } from "stream";
 import { finished } from "stream/promises";
-import { dirSync, fileSync } from "./lib/archiverHelpers";
+import { dirSync, fetchSync, fileSync } from "./lib/archiverHelpers";
+import { webResponseToNodeStream } from "./lib/webToNodeStream";
 
 // example inputs:
 /*
@@ -100,7 +101,9 @@ void (async function () {
     }
 
     for (const u of urls) {
-        //TODO:
+        console.log(`Fetching URL: ${u}`);
+        await fetchSync(archive, u, { name: path.basename(u) });
+        console.log("Finished fetching URL");
     }
 
     console.log("Finalizing archive ...");

@@ -100,26 +100,6 @@ void (async function () {
 
     console.log("Finalizing archive ...");
     await archive.finalize();
-
-    // const targetDir = args["targetDir"];
-    // const outputPath = `${path.join(args["outputDir"], args["filename"])}.zip`;
-    // const files = fileHelpers.getFilesInDirectory(targetDir);
-
-    // console.log(chalk.bgGreen(`Zipping ${files.length} files to ${outputPath}`));
-
-    // const zip = invokeAtDirectory(targetDir, () => {
-    //     const zip = new AdmZip();
-
-    //     console.log(chalk.greenBright(`Adding ${targetDir}`));
-    //     zip.addLocalFolder(".");
-
-    //     return zip;
-    // });
-
-    // console.log(chalk.greenBright(`Writing ${outputPath} ...`));
-    // zip.writeZip(outputPath);
-
-    // console.log(chalk.bgGreen("Zipped!"));
 })();
 
 function parseFileTypes(filePaths: string[]) {

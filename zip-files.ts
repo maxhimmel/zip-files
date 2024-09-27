@@ -5,10 +5,13 @@
 
 import * as Archiver from "archiver";
 import * as path from "path";
+import * as fs from "fs";
 import "zx/globals";
 import { cliHelpers, IArgInput, invokeAtDirectory } from "./lib/cliHelpers";
 import { fileHelpers } from "./lib/fileHelpers";
 import { Readable } from "stream";
+import { finished } from "stream/promises";
+import { dirSync, fileSync } from "./lib/archiverHelpers";
 
 // example inputs:
 /*
@@ -86,16 +89,18 @@ void (async function () {
 
     for (const f of files) {
         console.log(`Adding file: ${f}`);
-        archive.file(f, { name: path.basename(f) });
-        // zip.addLocalFile(f);
+        await fileSync(archive, f, { name: path.basename(f) });
+        console.log("Finished adding file");
     }
+
     for (const d of directories) {
         console.log(`Adding directory: ${d}`);
-        archive.directory(d, path.basename(d));
-        // zip.addLocalFolder(d);
+        await dirSync(archive, d, path.basename(d));
+        console.log("Finished adding directory");
     }
 
     for (const u of urls) {
+        //TODO:
     }
 
     console.log("Finalizing archive ...");

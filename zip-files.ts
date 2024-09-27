@@ -102,7 +102,11 @@ void (async function () {
 
     for (const u of urls) {
         console.log(`Fetching URL: ${u}`);
-        await fetchSync(archive, u, { name: path.basename(u) });
+
+        const url = new URL(u);
+        const name = path.join(url.hostname, url.pathname);
+
+        await fetchSync(archive, url, { name });
         console.log("Finished fetching URL");
     }
 

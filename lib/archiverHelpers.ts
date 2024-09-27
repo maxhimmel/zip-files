@@ -23,7 +23,7 @@ export function dirSync(archive: Archiver.Archiver, dirPath: string, destPath: f
 
 export async function fetchSync(
     archive: Archiver.Archiver,
-    url: string,
+    url: string | URL,
     data?: Archiver.EntryData | Archiver.ZipEntryData | Archiver.TarEntryData) {
 
     const response = await fetch(url);

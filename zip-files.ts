@@ -3,18 +3,11 @@
 // NOTE: I had so much trouble getting this .ts file to run
 // ...
 
-import * as Archiver from "archiver";
 import * as path from "path";
-import * as fs from "fs";
 import "zx/globals";
-import { cliHelpers, IArgInput, invokeAtDirectory } from "./lib/cliHelpers";
-import { fileHelpers } from "./lib/fileHelpers";
-import { Readable } from "stream";
-import { finished } from "stream/promises";
-import { dirSync, fetchSync, fileSync } from "./lib/archiverHelpers";
-import { webResponseToNodeStream } from "./lib/webToNodeStream";
-import { IArchiveResolver } from "./lib/archiveResolvers/iarchiveResolver";
 import { ArchiveResolverFactory } from "./lib/archiveResolvers/archiveResolverFactory";
+import { cliHelpers, IArgInput } from "./lib/cliHelpers";
+import { fileHelpers } from "./lib/fileHelpers";
 import { ZipController } from "./lib/zipController";
 
 // example inputs:

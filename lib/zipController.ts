@@ -14,26 +14,25 @@ export class ZipController {
         this.outputZip = fs.createWriteStream(outputPath);
         this.archive = Archiver.create("zip", options);
 
-        // do i hafta do "self" here as a workaround for not being able to use "this" inside the lamda below?
-        const self = this;
-        this.outputZip.on('close', function () {
-            self.isClosed = true;
-            console.log(self.archive.pointer() + ' total bytes');
-        });
+        this.archive.on('warning', this.handleError.bind(this));
+        this.archive.on('error', this.handleError.bind(this));
 
-        this.archive.on('warning', function (err) {
-            if (err.code === 'ENOENT') {
-                console.warn(err);
-            } else {
-                throw err;
-            }
-        });
-
-        this.archive.on('error', function (err) {
-            throw err;
-        });
+        this.outputZip.on('close', this.handleClose.bind(this));
 
         this.archive.pipe(this.outputZip);
+    }
+
+    private handleError(error: Archiver.ArchiverError) {
+        if (error.code === 'ENOENT') {
+            console.warn(error);
+        } else {
+            throw error;
+        }
+    }
+
+    private handleClose() {
+        this.isClosed = true;
+        console.log(chalk.green(this.archive.pointer() + ' total bytes'));
     }
 
     async appendGroup(resolvers: IArchiveResolver[]) {
@@ -47,7 +46,7 @@ export class ZipController {
     }
 
     async finalize() {
-        console.log("Finalizing archive ...");
+        console.log(chalk.bgGreenBright("Finalizing archive ..."));
         this.archive.finalize();
 
         while (!this.isClosed) {

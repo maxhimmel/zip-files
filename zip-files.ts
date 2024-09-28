@@ -15,6 +15,7 @@ import { dirSync, fetchSync, fileSync } from "./lib/archiverHelpers";
 import { webResponseToNodeStream } from "./lib/webToNodeStream";
 import { IArchiveResolver } from "./lib/archiveResolvers/iarchiveResolver";
 import { ArchiveResolverFactory } from "./lib/archiveResolvers/archiveResolverFactory";
+import { ZipController } from "./lib/zipController";
 
 // example inputs:
 /*
@@ -52,41 +53,16 @@ void (async function () {
 
     const outputPath = `${path.join(args["outputDir"], args["filename"])}.zip`;
 
-    const outputZip = fs.createWriteStream(outputPath);
-    const archive = Archiver.create("zip", {
-        zlib: { level: 9 }
+    const zipController = new ZipController({
+        outputPath,
+        options: { zlib: { level: 9 } }
     });
-
-    // listen for all archive data to be written
-    // 'close' event is fired only when a file descriptor is involved
-    outputZip.on('close', function () {
-        console.log(archive.pointer() + ' total bytes');
-        console.log('archiver has been finalized and the output file descriptor has closed.');
-    });
-
-    // good practice to catch warnings (ie stat failures and other non-blocking errors)
-    archive.on('warning', function (err) {
-        if (err.code === 'ENOENT') {
-            console.warn(err);
-        } else {
-            // throw error
-            throw err;
-        }
-    });
-
-    // good practice to catch this error explicitly
-    archive.on('error', function (err) {
-        throw err;
-    });
-
-    archive.pipe(outputZip);
 
     const filepaths = args["_"] as unknown as string[];
     for (const f of filepaths) {
         const archiveResolver = ArchiveResolverFactory.create(f);
-        await archiveResolver.append(archive);
+        await zipController.append(archiveResolver);
     }
 
-    console.log("Finalizing archive ...");
-    await archive.finalize();
+    await zipController.finalize();
 })();

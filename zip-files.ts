@@ -22,16 +22,6 @@ npx ts-node ./zip-files.ts /Users/maxymax/Repos/zip-files/tester "/Users/maxymax
 const argOptions = {
     inputs: [
         {
-            name: "filename",
-            alias: "f",
-            default: fileHelpers.getCurrentDirectoryName(),
-        },
-        {
-            name: "targetDir",
-            alias: "t",
-            default: fileHelpers.getCurrentDirectoryPath(),
-        },
-        {
             name: "outputDir",
             alias: "o",
             default: fileHelpers.getCurrentDirectoryPath(),

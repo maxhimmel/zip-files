@@ -3,24 +3,24 @@
 // NOTE: I had so much trouble getting this .ts file to run
 // ...
 
-import * as AdmZip from "adm-zip";
 import * as path from "path";
 import "zx/globals";
-import { cliHelpers, IArgInput, invokeAtDirectory } from "./lib/cliHelpers";
+import { ArchiveResolverFactory } from "./lib/archiveResolvers/archiveResolverFactory";
+import { cliHelpers, IArgInput } from "./lib/cliHelpers";
 import { fileHelpers } from "./lib/fileHelpers";
+import { ZipController } from "./lib/zipController";
+
+// example inputs:
+/*
+/Users/maxymax/Repos/zip-files/tester
+"/Users/maxymax/Repos/zip-files/tester/test magoo.txt"
+https://raw.githubusercontent.com/maxhimmel/zip-files/refs/heads/main/lib/fileHelpers.ts
+
+npx ts-node ./zip-files.ts /Users/maxymax/Repos/zip-files/tester "/Users/maxymax/Repos/zip-files/tester/test magoo.txt" https://raw.githubusercontent.com/maxhimmel/zip-files/refs/heads/main/lib/fileHelpers.ts
+*/
 
 const argOptions = {
     inputs: [
-        {
-            name: "filename",
-            alias: "f",
-            default: fileHelpers.getCurrentDirectoryName(),
-        },
-        {
-            name: "targetDir",
-            alias: "t",
-            default: fileHelpers.getCurrentDirectoryPath(),
-        },
         {
             name: "outputDir",
             alias: "o",
@@ -34,23 +34,18 @@ void (async function () {
         inputs: argOptions.inputs,
     });
 
-    const targetDir = args["targetDir"];
     const outputPath = `${path.join(args["outputDir"], args["filename"])}.zip`;
-    const files = fileHelpers.getFilesInDirectory(targetDir);
 
-    console.log(chalk.bgGreen(`Zipping ${files.length} files to ${outputPath}`));
-
-    const zip = invokeAtDirectory(targetDir, () => {
-        const zip = new AdmZip();
-
-        console.log(chalk.greenBright(`Adding ${targetDir}`));
-        zip.addLocalFolder(".");
-
-        return zip;
+    const zipController = new ZipController({
+        outputPath,
+        options: { zlib: { level: 9 } }
     });
 
-    console.log(chalk.greenBright(`Writing ${outputPath} ...`));
-    zip.writeZip(outputPath);
+    const filepaths = args["_"] as unknown as string[];
+    for (const f of filepaths) {
+        const archiveResolver = ArchiveResolverFactory.create(f);
+        await zipController.append(archiveResolver);
+    }
 
-    console.log(chalk.bgGreen("Zipped!"));
+    await zipController.finalize();
 })();

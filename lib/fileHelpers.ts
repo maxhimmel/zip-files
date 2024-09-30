@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as fs from "fs";
 
 export type FileType = "file" | "directory";
 
@@ -25,6 +26,33 @@ class FileHelpers {
 
     getCurrentDirectoryName() {
         return path.basename(process.cwd());
+    }
+
+    isFile(filePath: string) {
+        try {
+            return fs.statSync(filePath).isFile();
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+
+    isDirectory(filePath: string) {
+        try {
+            return fs.statSync(filePath).isDirectory();
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+
+    isUrl(filePath: string) {
+        try {
+            new URL(filePath);
+            return true;
+        } catch (_) {
+            return false;
+        }
     }
 }
 

@@ -1,25 +1,24 @@
 import * as Archiver from "archiver";
 import * as fs from "fs";
 import { IArchiveResolver } from "./archiveResolvers/iarchiveResolver";
+import { finished } from "stream/promises"
 
 export class ZipController {
-    private outputZip: fs.WriteStream;
     private archive: Archiver.Archiver;
-    private isClosed: boolean = false;
+    private onClosed: Promise<void>;
 
-    constructor({ outputPath, options }: {
-        outputPath: string;
+    constructor({ outputStream, options }: {
+        outputStream: fs.WriteStream;
         options?: Archiver.ArchiverOptions
     }) {
-        this.outputZip = fs.createWriteStream(outputPath);
         this.archive = Archiver.create("zip", options);
 
         this.archive.on('warning', this.handleError.bind(this));
         this.archive.on('error', this.handleError.bind(this));
 
-        this.outputZip.on('close', this.handleClose.bind(this));
+        this.onClosed = finished(outputStream);
 
-        this.archive.pipe(this.outputZip);
+        this.archive.pipe(outputStream);
     }
 
     private handleError(error: Archiver.ArchiverError) {
@@ -28,11 +27,6 @@ export class ZipController {
         } else {
             throw error;
         }
-    }
-
-    private handleClose() {
-        this.isClosed = true;
-        console.log(chalk.green(this.archive.pointer() + ' total bytes'));
     }
 
     async appendGroup(resolvers: IArchiveResolver[]) {
@@ -47,12 +41,8 @@ export class ZipController {
 
     async finalize() {
         console.log(chalk.bgGreenBright("Finalizing archive ..."));
-        this.archive.finalize();
+        await this.archive.finalize();
 
-        while (!this.isClosed) {
-            await new Promise<void>((resolve) => setTimeout(() => {
-                resolve();
-            }, 0));
-        }
+        return await this.onClosed;
     }
 }

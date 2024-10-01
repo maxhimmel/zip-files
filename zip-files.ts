@@ -4,7 +4,8 @@
 // ...
 
 import * as path from "path";
-import "zx/globals";
+import * as fs from "fs";
+import "zx/globals"; // remove me!
 import { ArchiveResolverFactory } from "./lib/archiveResolvers/archiveResolverFactory";
 import { cliHelpers, IArgInput } from "./lib/cliHelpers";
 import { fileHelpers } from "./lib/fileHelpers";
@@ -34,10 +35,12 @@ void (async function () {
         inputs: argOptions.inputs,
     });
 
-    const outputPath = `${path.join(args["outputDir"], args["filename"])}.zip`;
+    const outputStream = fs.createWriteStream(
+        `${path.join(args["outputDir"], args["filename"])}.zip`
+    );
 
     const zipController = new ZipController({
-        outputPath,
+        outputStream,
         options: { zlib: { level: 9 } }
     });
 

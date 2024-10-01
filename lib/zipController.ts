@@ -2,6 +2,7 @@ import * as Archiver from "archiver";
 import * as fs from "fs";
 import { IArchiveResolver } from "./archiveResolvers/iarchiveResolver";
 import { finished } from "stream/promises"
+import { chalk } from "zx/.";
 
 export class ZipController {
     private archive: Archiver.Archiver;

@@ -1,4 +1,5 @@
 import * as Archiver from "archiver";
+import * as path from "path"
 import { IArchiveResolver } from "./iarchiveResolver";
 import { webResponseToNodeStream } from "../webToNodeStream";
 export class URLResolver extends IArchiveResolver {

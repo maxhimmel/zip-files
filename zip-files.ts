@@ -5,7 +5,6 @@
 
 import * as path from "path";
 import * as fs from "fs";
-import "zx/globals"; // remove me!
 import { ArchiveResolverFactory } from "./lib/archiveResolvers/archiveResolverFactory";
 import { cliHelpers, IArgInput } from "./lib/cliHelpers";
 import { fileHelpers } from "./lib/fileHelpers";

@@ -1,3 +1,4 @@
+import { cd, chalk, minimist } from "zx/.";
 import { exitWithError } from "./errorHelpers";
 
 export interface IArgInput<T = any> {

@@ -1,4 +1,5 @@
 import * as Archiver from "archiver";
+import * as path from "path"
 import { IArchiveResolver } from "./iarchiveResolver";
 
 export class DirectoryResolver extends IArchiveResolver {
